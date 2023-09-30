@@ -37,7 +37,7 @@ The project is built with Maven and the application is packaged in a Docker imag
 The project is deployed on a Jenkins server and the code is analyzed with SonarQube.
 
 ## Team Members
-- [Karam MANNAI]() : Module 1
+- [Karam MANNAI]() : Module Departement.
 - [Mohamed Yassin KHABTHANI]() : Module 2
 - [Fadi Abdenabi]() : Module 3
 - [Yassine Aridhi]() : Module 4

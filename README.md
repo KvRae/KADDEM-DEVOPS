@@ -18,6 +18,7 @@
 
 ## Table of Contents
 - [Introduction](#introduction)
+- [Team Members](#team-members)
 - [Technologies](#technologies)
 - [Architecture](#architecture)
 - [Installation](#installation)
@@ -34,6 +35,13 @@ It also allows to search for books by title, author or category.
 The API is documented with Swagger and the code is tested with JUnit. 
 The project is built with Maven and the application is packaged in a Docker image. 
 The project is deployed on a Jenkins server and the code is analyzed with SonarQube.
+
+## Team Members
+- [Karam MANNAI]() : Module Departement.
+- [Mohamed Yassin KHABTHANI]() : Module 2
+- [Fadi Abdenabi]() : Module 3
+- [Yassine Aridhi]() : Module 4
+- [Mohamed Amine NASRI]()  : Module 5
 
 ## Technologies
 - Java 11

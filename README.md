@@ -30,8 +30,8 @@
 
 ## Introduction
 This project is a REST API for a library management system. 
-It allows to manage books, authors, users and loans. 
-It also allows to search for books by title, author or category. 
+It allows the management of contracts, students, teams, and departments. 
+It also allows you to search for contracts by title, author, or category. 
 The API is documented with Swagger and the code is tested with JUnit. 
 The project is built with Maven and the application is packaged in a Docker image. 
 The project is deployed on a Jenkins server and the code is analyzed with SonarQube.

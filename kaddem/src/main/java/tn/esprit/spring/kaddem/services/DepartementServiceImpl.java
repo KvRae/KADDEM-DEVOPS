@@ -36,7 +36,4 @@ public class DepartementServiceImpl implements IDepartementService{
 		Departement d=retrieveDepartement(idDepartement);
 		departementRepository.delete(d);
 	}
-
-
-
 }

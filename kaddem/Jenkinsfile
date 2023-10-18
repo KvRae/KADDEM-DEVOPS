@@ -1,0 +1,17 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Récupération du code') {
+            steps {
+                sh 'git checkout karamMANNAI-5SIM1-G2'
+                sh 'git pull origin karamMANNAI-5SIM1-G2'
+            }
+        }
+        stage('Compilation avec Maven') {
+            steps {
+                sh 'mvn clean compile'
+            }
+        }
+    }
+}

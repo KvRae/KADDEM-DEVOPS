@@ -4,13 +4,37 @@ pipeline {
     stages {
         stage('Récupération du code') {
             steps {
-                sh 'git checkout karamMANNAI-5SIM1-G2'
+                git branch: 'karamMANNAI-5SIM1-G2', credentialsId: 'Git', url: 'https://github.com/KvRae/5SIM1-G2-KADDEM.git'
                 sh 'git pull origin karamMANNAI-5SIM1-G2'
             }
         }
+
         stage('Compilation avec Maven') {
             steps {
-                sh 'mvn clean compile'
+                dir('kaddem') {
+                    // Change the working directory to the 'kaddem' subdirectory
+                    sh 'mvn clean compile'
+                }
+            }
+        }
+
+        stage('Tests unitaires') {
+           steps {
+                dir('kaddem') {
+                    // Change the working directory to the 'kaddem' subdirectory
+                    sh 'mvn test'
+                }
+           }
+        }
+
+        stage('Analyse de code avec SonarQube') {
+            steps {
+                dir('kaddem') {
+                    // Change the working directory to the 'kaddem' subdirectory
+                    withSonarQubeEnv('SonarQube') {
+                        sh 'mvn sonar:sonar'
+                    }
+                }
             }
         }
     }

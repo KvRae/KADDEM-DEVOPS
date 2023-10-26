@@ -18,15 +18,6 @@ pipeline {
             }
         }
 
-        stage('Tests unitaires') {
-           steps {
-                dir('kaddem') {
-                    // Change the working directory to the 'kaddem' subdirectory
-                    sh 'mvn test'
-                }
-           }
-        }
-
         stage('Analyse de code avec SonarQube') {
             steps {
                 dir('kaddem') {
@@ -36,6 +27,24 @@ pipeline {
                     }
                 }
             }
+        }
+
+        stage('Tests unitaires') {
+           steps {
+                dir('kaddem') {
+                    // Change the working directory to the 'kaddem' subdirectory
+                    sh 'mvn test'
+                }
+           }
+        }
+
+        stage('Nexus') {
+           steps {
+                dir('kaddem') {
+                    // Change the working directory to the 'kaddem' subdirectory
+                    sh "mvn deploy -DskipTests"
+                }
+           }
         }
     }
 }

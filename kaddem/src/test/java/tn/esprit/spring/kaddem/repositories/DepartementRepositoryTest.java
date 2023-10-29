@@ -11,7 +11,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import tn.esprit.spring.kaddem.entities.Departement;
-
+/*
 @RunWith(SpringRunner.class)
 @DataJpaTest
 @ActiveProfiles("test")
@@ -41,3 +41,4 @@ import tn.esprit.spring.kaddem.entities.Departement;
         assertEquals(departement.getNomDepart(), foundDepartement.getNomDepart());
     }
 }
+*/

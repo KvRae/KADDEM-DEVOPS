@@ -1,4 +1,4 @@
-FROM openjdk:11-jdk-slim
-EXPOSE ...
-ADD target/timesheet-devops-1.0.jar timesheet-devops-1.0.jar
-ENTRYPOINT ["java","-jar","/timesheet-devops-1.0.jar"]
+FROM openjdk:11
+EXPOSE 8083
+ADD target/kaddem-1.0.jar kaddem-1.0.jar
+ENTRYPOINT ["java","-jar","/kaddem-1.0.jar"]

@@ -5,7 +5,7 @@ services:
     image: mysql:5.7
     restart: unless-stopped
     ports:
-      - 3307:3306
+      - "3307:3306"
     volumes:
       - db:/var/lib/mysql
 
@@ -15,7 +15,7 @@ services:
     build: ./
     restart: on-failure
     ports:
-      - 6868:8082
+      - "6868:8082"
     volumes:
       - .m2:/root/.m2
     stdin_open: true

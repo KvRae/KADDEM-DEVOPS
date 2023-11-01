@@ -60,21 +60,21 @@ pipeline {
         }
 
         stage('Push To Docker Hub') {
-            steps {
-                dir('kaddem'){
-                    script {
-                        docker.withRegistry('https://registry.hub.docker.com', 'Docker') {
-                            docker.image("kvrae/kaddem:${env.BUILD_NUMBER}").push()
-                        }
-                    }
-                }
-            }
+//             steps {
+//                 dir('kaddem'){
+//                     script {
+//                         docker.withRegistry('https://registry.hub.docker.com', 'Docker') {
+//                             docker.image("kvrae/kaddem:${env.BUILD_NUMBER}").push()
+//                         }
+//                     }
+//                 }
+//             }
         }
 
         stage('Run Docker Compose') {
             steps {
                 script {
-                    sh 'docker-compose up -d'
+                    sh 'docker compose up -d'
                 }
             }
         }

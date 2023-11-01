@@ -12,7 +12,7 @@ services:
   kaddem-backend:
     depends_on:
       - mysqldb
-    build: ./
+    build: ./kaddem
     restart: on-failure
     ports:
       - "6868:8082"

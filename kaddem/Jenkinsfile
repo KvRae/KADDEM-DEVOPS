@@ -18,6 +18,16 @@ pipeline {
             }
         }
 
+        stage('Tests unitaires avec JUnit') {
+           steps {
+               // Change the working directory to the 'kaddem' subdirectory
+                dir('kaddem') {
+
+                    sh 'mvn test'
+                }
+           }
+        }
+
         stage('Analyse de code avec SonarQube') {
             steps {
                 // Change the working directory to the 'kaddem' subdirectory
@@ -28,16 +38,6 @@ pipeline {
                     }
                 }
             }
-        }
-
-            stage('Tests unitaires avec JUnit') {
-           steps {
-               // Change the working directory to the 'kaddem' subdirectory
-                dir('kaddem') {
-
-                    sh 'mvn test'
-                }
-           }
         }
 
         stage('Deploiment Artifact a Nexus') {
@@ -67,6 +67,14 @@ pipeline {
                             docker.image("kvrae/kaddem:${env.BUILD_NUMBER}").push()
                         }
                     }
+                }
+            }
+        }
+
+        stage('Run Docker Compose') {
+            steps {
+                script {
+                    sh 'docker-compose up -d'
                 }
             }
         }

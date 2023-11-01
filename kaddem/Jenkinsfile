@@ -67,8 +67,7 @@ pipeline {
                             docker.image("kvrae/kaddem:${env.BUILD_NUMBER}").push()
                         }
                     }
-                }*
-
+                }
             }
         }
 

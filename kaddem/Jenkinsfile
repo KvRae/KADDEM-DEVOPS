@@ -2,26 +2,27 @@ pipeline {
     agent any
 
     stages {
-        stage('Récupération du code') {
+        stage('Récupération du code de GitHub') {
             steps {
                 git branch: 'karamMANNAI-5SIM1-G2', credentialsId: 'Git', url: 'https://github.com/KvRae/5SIM1-G2-KADDEM.git'
                 sh 'git pull origin karamMANNAI-5SIM1-G2'
             }
         }
 
-        stage('Compilation avec Maven') {
+        stage('Build avec Maven') {
             steps {
+                // Change the working directory to the 'kaddem' subdirectory
                 dir('kaddem') {
-                    // Change the working directory to the 'kaddem' subdirectory
-                    sh 'mvn clean compile'
+                    sh 'mvn clean install'
                 }
             }
         }
 
         stage('Analyse de code avec SonarQube') {
             steps {
+                // Change the working directory to the 'kaddem' subdirectory
                 dir('kaddem') {
-                    // Change the working directory to the 'kaddem' subdirectory
+
                     withSonarQubeEnv('SonarQube') {
                         sh 'mvn sonar:sonar'
                     }
@@ -29,22 +30,45 @@ pipeline {
             }
         }
 
-        stage('Tests unitaires') {
+            stage('Tests unitaires avec JUnit') {
            steps {
+               // Change the working directory to the 'kaddem' subdirectory
                 dir('kaddem') {
-                    // Change the working directory to the 'kaddem' subdirectory
+
                     sh 'mvn test'
                 }
            }
         }
 
-        stage('Nexus') {
+        stage('Deploiment Artifact a Nexus') {
            steps {
+               // Change the working directory to the 'kaddem' subdirectory
                 dir('kaddem') {
-                    // Change the working directory to the 'kaddem' subdirectory
                     sh "mvn deploy -DskipTests"
                 }
            }
+        }
+
+        stage('Build image Docker ') {
+            steps {
+                dir('kaddem') {
+                    script {
+                        docker.build("kvrae/kaddem:${env.BUILD_NUMBER}")
+                    }
+                }
+            }
+        }
+
+        stage('Push To Docker Hub') {
+            steps {
+                dir('kaddem'){
+                    script {
+                        docker.withRegistry('https://registry.hub.docker.com', 'Docker') {
+                            docker.image("kvrae/kaddem:${env.BUILD_NUMBER}").push()
+                        }
+                    }
+                }
+            }
         }
     }
 }

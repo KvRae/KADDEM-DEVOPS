@@ -6,8 +6,10 @@ pipeline {
   stage("MVN Clean") {
 
              steps{
-             sh 'mvn clean'
+                             dir('kaddem') {
 
+             sh 'mvn clean'
+    }
             }
         }
 
@@ -15,14 +17,19 @@ pipeline {
   stage("MVN Compile") {
 
              steps{
-             sh 'mvn compile'
+                             dir('kaddem') {
 
+             sh 'mvn compile'
+}
             }
         }
   stage("Junit") {
 
              steps{
+                             dir('kaddem') {
+
              sh 'mvn test'
+            }
             }
         }
     }

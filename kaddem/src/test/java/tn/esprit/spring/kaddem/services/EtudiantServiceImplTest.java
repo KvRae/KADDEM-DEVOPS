@@ -2,75 +2,163 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
-public class EtudiantServiceImplTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
+
+class EtudiantServiceImplTest {
 
     @Mock
-    private EquipeRepository equipeRepository;
+    private EtudiantRepository etudiantRepository;
 
     @Mock
     private ContratRepository contratRepository;
 
     @Mock
-    private DepartementRepository departementRepository;
+    private EquipeRepository equipeRepository;
 
     @Mock
-    private EtudiantRepository etudiantRepository;
+    private DepartementRepository departementRepository;
 
     @InjectMocks
     private EtudiantServiceImpl etudiantService;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.open(this);
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
     void testRetrieveAllEtudiants() {
-        // Arrange: create a mock repository. store some test data
-        Mock<List<Etudiant>> mock = mock(IListService.class);
-        when(equipeRepository.findAllEtudiants()).thenReturn(mock);
-        // Act: call the method under test using the mocks
+        // Mocking data
+        List<Etudiant> etudiants = new ArrayList<>();
+        when(etudiantRepository.findAll()).thenReturn(etudiants);
+
+        // Test
         List<Etudiant> result = etudiantService.retrieveAllEtudiants();
-        // Assert: check if the result is the expected list
-        assertEquals(mock.value(), result);
+
+        // Verify
+        assertEquals(etudiants, result);
+        verify(etudiantRepository, times(1)).findAll();
     }
 
     @Test
-    void testAddAndAssignEtudiantToEquipeAndContract() {
-        // Arrange: create mock Objects for the repository
-        Mock<Departement> departement = mock(IDepartementService.class);
-        mockEtudiantRepository(departement);
-        Mock<Contrat> contract = mock(IContratService.class);
-        mockEquipeRepository(contract);
-        // Act: call the method under test
-        Etudiant etudiant = etudiantService.addAndAssignEtudiantToEquipeAndContract(new Etudiant(), 5, 6);
-        // Assert: check if the result is the expected
-        assertEquals(etudiant, etudiantService.findById(1));
+    void testAddEtudiant() {
+        // Mocking data
+        Etudiant etudiant = new Etudiant();
+        when(etudiantRepository.save(etudiant)).thenReturn(etudiant);
+
+        // Test
+        Etudiant result = etudiantService.addEtudiant(etudiant);
+
+        // Verify
+        assertEquals(etudiant, result);
+        verify(etudiantRepository, times(1)).save(etudiant);
+    }
+
+    @Test
+    void testUpdateEtudiant() {
+        // Mocking data
+        Etudiant etudiant = new Etudiant();
+        when(etudiantRepository.save(etudiant)).thenReturn(etudiant);
+
+        // Test
+        Etudiant result = etudiantService.updateEtudiant(etudiant);
+
+        // Verify
+        assertEquals(etudiant, result);
+        verify(etudiantRepository, times(1)).save(etudiant);
     }
 
     @Test
     void testRetrieveEtudiant() {
-        // Arrange: create mock Objects for the repository
-        Mock<Departement> departement = mock(IDepartementService.class);
-        mockEtudiantRepository(departement);
-        Mock<Contrat> contract = mock(IContratService.class);
-        mockEquipeRepository(contract);
-        // Act: call the method under test using the mock objects
-        Etudiant etudiant = etudiantService.retrieveEtudiant(1);
-        // Assert: check if the result is the expected
-        assertEquals(etudiant, etudiantService.findById(1));
+        // Mocking data
+        Integer id = 1;
+        Etudiant etudiant = new Etudiant();
+        when(etudiantRepository.findById(id)).thenReturn(Optional.of(etudiant));
+
+        // Test
+        Etudiant result = etudiantService.retrieveEtudiant(id);
+
+        // Verify
+        assertEquals(etudiant, result);
+        verify(etudiantRepository, times(1)).findById(id);
     }
 
     @Test
     void testRemoveEtudiant() {
-        // Arrange: create mock Objects for the repository
-        Mock<Departement> departement = mock(IDepartementService.class);
-        mockEtudiantRepository(departement);
+        // Mocking data
+        Integer id = 1;
+        Etudiant etudiant = new Etudiant();
+        when(etudiantRepository.findById(id)).thenReturn(Optional.of(etudiant));
+
+        // Test
+        etudiantService.removeEtudiant(id);
+
+        // Verify
+        verify(etudiantRepository, times(1)).delete(etudiant);
+    }
+
+    @Test
+    void testAssignEtudiantToDepartement() {
+        // Mocking data
+        Integer etudiantId = 1;
+        Integer departementId = 2;
+
+        Etudiant etudiant = new Etudiant();
+        when(etudiantRepository.findById(etudiantId)).thenReturn(Optional.of(etudiant));
+
+        Departement departement = new Departement();
+        when(departementRepository.findById(departementId)).thenReturn(Optional.of(departement));
+
+        // Test
+        etudiantService.assignEtudiantToDepartement(etudiantId, departementId);
+
+        // Verify
+        assertEquals(departement, etudiant.getDepartement());
+        verify(etudiantRepository, times(1)).save(etudiant);
+    }
+
+    @Test
+    void testAddAndAssignEtudiantToEquipeAndContract() {
+        // Mocking data
+        Etudiant etudiant = new Etudiant();
+        Integer idContrat = 1;
+        Integer idEquipe = 2;
+        Contrat contrat = new Contrat();
+        Equipe equipe = new Equipe();
+
+        when(contratRepository.findById(idContrat)).thenReturn(Optional.of(contrat));
+        when(equipeRepository.findById(idEquipe)).thenReturn(Optional.of(equipe));
+
+        // Test
+        Etudiant result = etudiantService.addAndAssignEtudiantToEquipeAndContract(etudiant, idContrat, idEquipe);
+
+        // Verify
+        assertEquals(etudiant, result);
+        assertEquals(etudiant, contrat.getEtudiant());
+        assertTrue(equipe.getEtudiants().contains(etudiant));
+        verify(contratRepository, times(1)).save(contrat);
+        verify(equipeRepository, times(1)).save(equipe);
+    }
+
+    @Test
+    void testGetEtudiantsByDepartement() {
+        // Mocking data
+        Integer idDepartement = 1;
+        List<Etudiant> etudiants = new ArrayList<>();
+        when(etudiantRepository.findEtudiantsByDepartement_IdDepart(idDepartement)).thenReturn(etudiants);
+
+        // Test
+        List<Etudiant> result = etudiantService.getEtudiantsByDepartement(idDepartement);
+
+        // Verify
+        assertEquals(etudiants, result);
+        verify(etudiantRepository, times(1)).findEtudiantsByDepartement_IdDepart(idDepartement);
+    }
+}

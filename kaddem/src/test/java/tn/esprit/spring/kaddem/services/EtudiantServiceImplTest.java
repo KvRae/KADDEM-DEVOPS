@@ -21,6 +21,8 @@ import tn.esprit.spring.kaddem.repositories.ContratRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.junit.runner.RunWith;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;

@@ -22,7 +22,6 @@ pipeline {
            steps {
                // Change the working directory to the 'kaddem' subdirectory
                 dir('kaddem') {
-
                     sh 'mvn test'
                 }
            }
@@ -32,7 +31,6 @@ pipeline {
             steps {
                 // Change the working directory to the 'kaddem' subdirectory
                 dir('kaddem') {
-
                     withSonarQubeEnv('SonarQube') {
                         sh 'mvn sonar:sonar'
                     }
@@ -74,8 +72,23 @@ pipeline {
         stage('Run Docker Compose') {
             steps {
                 script {
+                    sh 'docker-compose pull'
                     sh 'docker compose up -d'
                 }
+            }
+        }
+
+        stage('Prometheus & Grafana') {
+            steps {
+                script {
+                   sh 'sudo docker start prometheus'
+                   sh 'sudo docker start grafana'
+                }
+            }
+        }
+        stage('Email Notification') {
+            steps {
+                emailext body: 'Pip Went Successful ! ', subject: 'Nouveau commit sur GitHub', to: 'karam.mannai@esprit.tn'
             }
         }
     }

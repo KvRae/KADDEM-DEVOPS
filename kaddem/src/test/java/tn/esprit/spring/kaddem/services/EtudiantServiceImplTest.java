@@ -1,8 +1,22 @@
+package tn.esprit.spring.kaddem.services;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import tn.esprit.spring.kaddem.entities.Etudiant;
+import tn.esprit.spring.kaddem.repositories.EtudiantRepository;
+
+import tn.esprit.spring.kaddem.entities.Departement;
+import tn.esprit.spring.kaddem.repositories.DepartementRepository;
+
+import tn.esprit.spring.kaddem.entities.Equipe;
+import tn.esprit.spring.kaddem.repositories.EquipeRepository;
+
+import tn.esprit.spring.kaddem.entities.Contrat;
+import tn.esprit.spring.kaddem.repositories.ContratRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +25,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
+@RunWith(MockitoJUnitRunner.class)
 class EtudiantServiceImplTest {
 
     @Mock

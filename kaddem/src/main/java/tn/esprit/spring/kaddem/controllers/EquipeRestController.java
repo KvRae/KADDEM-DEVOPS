@@ -1,6 +1,8 @@
 package tn.esprit.spring.kaddem.controllers;
 
 
+import lombok.AllArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 import tn.esprit.spring.kaddem.entities.Equipe;
 import tn.esprit.spring.kaddem.services.IEquipeService;

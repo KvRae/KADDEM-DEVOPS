@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+    environment {
+        MAVEN_HOME = tool 'Maven' // Use the Maven tool configured in Jenkins
+        NEXUS_REPO = 'your-nexus-repository-url' // Replace with your Nexus repository URL
+    }
+
     stages {
         stage('GIT') {
             steps {
@@ -9,13 +14,27 @@ pipeline {
             }
         }
 
-         stage('SONARQUBE') {
+        stage('MAVEN-CLEAN') {
             steps {
-                    dir('kaddem'){
-                        sh 'mvn sonar:sonar'
-                    }
+                dir('kaddem') {
+                    sh "${MAVEN_HOME}/bin/mvn clean"
+                }
+            }
+        }
 
+        stage('MAVEN-DEPLOY') {
+            steps {
+                dir('kaddem') {
+                    sh "${MAVEN_HOME}/bin/mvn deploy -Dmaven.test.skip=true -DaltDeploymentRepository=nexus::default::${NEXUS_REPO}"
+                }
+            }
+        }
 
+        stage('SONARQUBE') {
+            steps {
+                dir('kaddem') {
+                    sh "${MAVEN_HOME}/bin/mvn sonar:sonar"
+                }
             }
         }
     }

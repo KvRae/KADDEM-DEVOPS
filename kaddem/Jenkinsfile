@@ -4,25 +4,26 @@ pipeline {
     stages {
         stage('GIT') {
             steps {
-                git branch: 'FediAbdennabi-5SIM1-G2', url: 'https://github.com/KvRae/5SIM1-G2-KADDEM.git'
+                sh 'git checkout FediAbdennabi-5SIM1-G2'
                 sh 'git pull origin FediAbdennabi-5SIM1-G2'
             }
         }
 
-        stage('MAVEN-CLEAN') {
-            steps {
-                dir('kaddem') {
-                    sh "mvn clean"
-                }
-            }
+        stage("Clean and Build") {
+             steps {
+                 sh 'mvn clean'
+                 sh 'mvn test'
+             }
         }
 
-        stage('SONARQUBE') {
-            steps {
-                dir('kaddem') {
-                    sh "mvn sonar:sonar"
-                }
-            }
+
+        stage("SonarQube analysis") {
+              steps {
+                  withSonarQubeEnv('sonarQubeServer') {
+                      sh 'mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent -Djacoco.version=0.8.8 test jacoco:report'
+                      sh "mvn sonar:sonar -Dsonar.jacoco.reportPaths=target/site/jacoco/jacoco.xml"
+                  }
+              }
         }
     }
 }

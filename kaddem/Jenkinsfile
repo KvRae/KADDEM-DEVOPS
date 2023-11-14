@@ -3,34 +3,38 @@ pipeline {
     stages {
         stage("Git") {
             steps {
-                sh 'git checkout FediAbdennabi-5SIM1-G2'
+                git branch: 'FediAbdennabi-5SIM1-G2', url: 'https://github.com/KvRae/5SIM1-G2-KADDEM.git'
                 sh 'git pull origin FediAbdennabi-5SIM1-G2'
             }
         }
 
         stage("Maven") {
             steps {
-                withMaven(maven: 'mvn') {
-                    sh "mvn clean"
+                dir('kaddem') {
+                    sh 'mvn clean '
                 }
             }
         }
 
         stage("JUnit") {
             steps {
-                withMaven(maven: 'mvn') {
-                    sh "mvn test"
-                }
+               dir('kaddem'){
+                    withMaven(maven: 'mvn') {
+                        sh "mvn test"
+                    }
+               }
             }
         }
 
         stage('SonarQube') {
             steps {
-                withMaven(maven: 'mvn') {
-                    withSonarQubeEnv('sonarQubeServer') {
-                        sh 'mvn sonar:sonar'
-                    }
-                }
+               dir('kaddem'){
+                    withMaven(maven: 'mvn') {
+                         withSonarQubeEnv('sonarQubeServer') {
+                              sh 'mvn sonar:sonar'
+                         }
+                     }
+               }
             }
         }
 

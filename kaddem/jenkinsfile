@@ -30,6 +30,15 @@ pipeline {
             }
         }
 
+        stage('MVN Nexus') {
+                   steps {
+                       // Change the working directory to the 'kaddem' subdirectory
+                        dir('kaddem') {
+                            sh "mvn deploy -DskipTests"
+                        }
+                   }
+                }
+
 
     }
 }

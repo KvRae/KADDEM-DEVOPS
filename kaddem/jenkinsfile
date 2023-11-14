@@ -1,0 +1,32 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout GIT') {
+            steps {
+                echo 'Pulling...'
+                git branch: 'yassineAridhi_5sim1_G2', url: 'https://github.com/KvRae/5SIM1-G2-KADDEM.git'
+            }
+        }
+
+        stage('Build avec Maven') {
+            steps {
+                // Change the working directory to the 'kaddem' subdirectory
+                dir('kaddem') {
+                    sh 'mvn clean compile'
+                }
+            }
+        }
+
+         stage('MVN SONARQUBE') {
+            steps {
+                    withSonarQubeEnv('sonarqube') {
+                        sh 'mvn sonar:sonar'
+                    }
+
+            }
+        }
+
+
+    }
+}

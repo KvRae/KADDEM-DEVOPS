@@ -5,13 +5,14 @@ pipeline {
         stage('GIT') {
             steps {
                 git branch: 'FediAbdennabi-5SIM1-G2', url: 'https://github.com/KvRae/5SIM1-G2-KADDEM.git'
+                sh 'git pull origin FediAbdennabi-5SIM1-G2
             }
         }
 
         stage('Maven') {
             steps {
                 dir('kaddem') {
-                    sh 'mvn clean compile'
+                    sh 'mvn clean install'
                 }
             }
         }
@@ -27,15 +28,5 @@ pipeline {
 
             }
         }
-
-        stage('Nexus') {
-                   steps {
-                        dir('kaddem') {
-                            sh "mvn deploy -DskipTests"
-                        }
-                   }
-                }
-
-
     }
 }

@@ -1,10 +1,10 @@
 pipeline {
-        agent any
+    agent any
+
     stages {
         stage("Git") {
             steps {
                 git branch: 'FediAbdennabi-5SIM1-G2', url: 'https://github.com/KvRae/5SIM1-G2-KADDEM.git'
-                sh 'git pull origin FediAbdennabi-5SIM1-G2'
             }
         }
 
@@ -18,7 +18,7 @@ pipeline {
 
         stage("JUnit") {
             steps {
-               dir('kaddem'){
+               dir('kaddem') {
                     withMaven(maven: 'mvn') {
                         sh "mvn test"
                     }
@@ -28,7 +28,7 @@ pipeline {
 
         stage('SonarQube') {
             steps {
-               dir('kaddem'){
+               dir('kaddem') {
                     withMaven(maven: 'mvn') {
                          withSonarQubeEnv('sonarQubeServer') {
                               sh 'mvn sonar:sonar'
@@ -37,8 +37,5 @@ pipeline {
                }
             }
         }
-
-        }
-
     }
 }

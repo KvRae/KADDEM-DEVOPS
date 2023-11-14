@@ -19,9 +19,7 @@ pipeline {
         stage("JUnit") {
             steps {
                dir('kaddem') {
-                    withMaven(maven: 'mvn') {
-                        sh "mvn test"
-                    }
+                   sh "mvn test"
                }
             }
         }
@@ -29,11 +27,9 @@ pipeline {
         stage('SonarQube') {
             steps {
                dir('kaddem') {
-                    withMaven(maven: 'mvn') {
-                         withSonarQubeEnv('sonarQubeServer') {
-                              sh 'mvn sonar:sonar'
-                         }
-                     }
+                   withSonarQubeEnv('sonarQubeServer') {
+                       sh 'mvn sonar:sonar'
+                   }
                }
             }
         }

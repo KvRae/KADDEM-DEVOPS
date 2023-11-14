@@ -1,0 +1,40 @@
+pipeline {
+        agent any
+    stages {
+        stage("Git") {
+            steps {
+                sh 'git checkout FediAbdennabi-5SIM1-G2'
+                sh 'git pull origin FediAbdennabi-5SIM1-G2'
+            }
+        }
+
+        stage("Maven") {
+            steps {
+                withMaven(maven: 'mvn') {
+                    sh "mvn clean"
+                }
+            }
+        }
+
+        stage("JUnit") {
+            steps {
+                withMaven(maven: 'mvn') {
+                    sh "mvn test"
+                }
+            }
+        }
+
+        stage('SonarQube') {
+            steps {
+                withMaven(maven: 'mvn') {
+                    withSonarQubeEnv('sonarQubeServer') {
+                        sh 'mvn sonar:sonar'
+                    }
+                }
+            }
+        }
+
+        }
+
+    }
+}

@@ -20,9 +20,12 @@ pipeline {
 
          stage('MVN SONARQUBE') {
             steps {
-                    withSonarQubeEnv('sonarqube') {
-                        sh 'mvn sonar:sonar'
+                    dir('kaddem'){
+                        withSonarQubeEnv('sonarqube') {
+                            sh 'mvn sonar:sonar'
+                        }
                     }
+
 
             }
         }

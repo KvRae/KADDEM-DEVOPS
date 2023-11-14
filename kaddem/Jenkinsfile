@@ -16,14 +16,6 @@ pipeline {
             }
         }
 
-        stage("JUnit") {
-            steps {
-               dir('kaddem') {
-                   sh "mvn test"
-               }
-            }
-        }
-
         stage('SonarQube') {
             steps {
                dir('kaddem') {

@@ -9,20 +9,10 @@ pipeline {
             }
         }
 
-        stage('Maven') {
-            steps {
-                dir('kaddem') {
-                    sh 'mvn clean install'
-                }
-            }
-        }
-
          stage('SONARQUBE') {
             steps {
                     dir('kaddem'){
-                        withSonarQubeEnv('sonarqube') {
-                            sh 'mvn sonar:sonar'
-                        }
+                        sh 'mvn sonar:sonar'
                     }
 
 

@@ -15,9 +15,8 @@
     <description>kaddem</description>
     <properties>
         <java.version>1.8</java.version>
-        <sonar.host.url>http://192.168.33.10:9000</sonar.host.url>
-        <sonar.login>admin</sonar.login>
-        <sonar.password>f94047233</sonar.password>
+        <sonar.host.url>http://localhost:9000</sonar.host.url>
+        <sonar.token>sqa_daffa56f2d2134f017b5add8ce8c4b9ba9e6ffaf</sonar.token>
     </properties>
     <dependencies>
         <dependency>

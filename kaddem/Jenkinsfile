@@ -1,15 +1,22 @@
 pipeline {
     agent any
 
+    environment {
+        DOCKERHUB_CREDENTIALS = 'fediabdennabi-testest'
+        DOCKERHUB_USR = 'fediabdennabi'
+        DOCKERHUB_PSW = 'dckr_pat_BysrQD8c5VVimUx5IHWxBdGbG8g'
+
+    }
+
     stages {
-        stage('GIT') {
+        stage('Récupération du Code') {
             steps {
                 sh 'git checkout FediAbdennabi-5SIM1-G2'
                 sh 'git pull origin FediAbdennabi-5SIM1-G2'
             }
         }
 
-        stage("Maven Clean") {
+        stage("Lancement de Maven") {
              steps {
                  dir('kaddem') {
                      sh 'mvn clean'
@@ -17,19 +24,19 @@ pipeline {
              }
         }
 
-        stage("Maven Compile") {
+        stage("Test Mockito") {
              steps {
                  dir('kaddem') {
-                     sh 'mvn compile'
+                     sh 'mvn test'
                  }
              }
         }
 
-        stage("SonarQube analysis") {
+        stage("Analyse avec SonarQube") {
             steps {
                 dir('kaddem') {
                     withSonarQubeEnv('sonarserver') {
-                        sh "mvn sonar:sonar"
+                        sh 'mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=f94047233'
                     }
 
                 }
@@ -37,7 +44,7 @@ pipeline {
         }
 
 
-         stage('Nexus') {
+         stage('Déploiement Nexus') {
              steps {
                  dir('kaddem') {
                      sh "mvn deploy -DskipTests"
@@ -45,16 +52,63 @@ pipeline {
              }
          }
 
-         stage('Docker') {
+
+           stage('Création image Docker') {
                steps {
                     dir('kaddem') {
                         script {
-                             docker.build("fedi/kaddem:${env.BUILD_NUMBER}")
+                            def dockerTag = "${DOCKERHUB_USR}/kaddem:lts"
+                            sh "docker build -t $dockerTag ."
                         }
                     }
                }
          }
 
+
+       /*stage('Docker Hub') {
+            steps {
+                dir('kaddem') {
+                    script {
+                        docker.withRegistry('https://registry.hub.docker.com', DOCKERHUB_CREDENTIALS) {
+                            docker.image("fedi/kaddem:${env.BUILD_NUMBER}").push()
+                        }
+                    }
+                }
+            }
+        } */
+
+         stage('Push vers DockerHub') {
+            steps {
+                script {
+                    def dockerTag = ":${env.BUILD_NUMBER}"
+                    sh "docker logout"
+                    sh "docker login -u ${DOCKERHUB_USR} -p ${DOCKERHUB_PSW}"
+
+                    sh "docker push ${DOCKERHUB_USR}/kaddem:lts"
+
+                }
+            }
+        }
+
+        stage('Pre-Prod (Docker Compose)'){
+            steps {
+                sh "docker logout"
+                sh "docker login -u ${DOCKERHUB_USR} -p ${DOCKERHUB_PSW}"
+                sh "docker compose up -d"
+            }
+        }
+
+        stage('Prometheus'){
+            steps {
+                sh "docker start prometheus"
+            }
+        }
+
+        stage('Grafana'){
+            steps {
+                sh "docker start grafana"
+            }
+        }
 
     }
 }

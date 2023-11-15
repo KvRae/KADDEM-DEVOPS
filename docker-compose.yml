@@ -18,10 +18,6 @@ services:
   spring-app:
     image: kvrae/kaddem:${BUILD_NUMBER}
     restart: on-failure
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/kaddem?createDatabaseIfNotExist=true&useUnicode=true
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD:
     ports:
       - "6868:8089"
 

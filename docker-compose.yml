@@ -1,7 +1,7 @@
 version: '3'
 services:
   mysqldb:
-    image: 'mysql:5.7'
+    image: 'mysql:8.0'
     restart: unless-stopped
     environment:
       MYSQL_DATABASE: kaddem
@@ -22,7 +22,7 @@ services:
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD:
     ports:
-      - "6868:8089"
+      - "8089:8089"
 
     depends_on:
       - mysqldb

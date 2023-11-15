@@ -1,4 +1,9 @@
 FROM openjdk:11
+
 EXPOSE 8089
-ADD curl -o kaddem-1.0.jar -L "http://192.168.1.17:8081/repository/maven-releases/tn/esprit/spring/kaddem/0.0.1/kaddem-0.0.1.jar"/
-ENTRYPOINT ["java", "-jar", "kaddem-1.0.jar"]
+
+# Download the JAR from the remote repository
+RUN curl -o kaddem.jar -L "http://192.168.1.17:8081/repository/maven-releases/tn/esprit/spring/kaddem/0.0.1/kaddem-0.0.1.jar"
+
+# Set the entry point to run the application
+ENTRYPOINT ["java", "-jar", "kaddem.jar"]

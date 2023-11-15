@@ -19,7 +19,7 @@ services:
     image: kvrae/kaddem:${BUILD_NUMBER}
     restart: on-failure
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb:3306/kaddem?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=utf-8&autoReconnect=true&useSSL=false
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/kaddem?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=utf-8&autoReconnect=true&useSSL=false
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: ""
     ports:

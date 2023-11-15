@@ -5,6 +5,7 @@ services:
     restart: unless-stopped
     environment:
       MYSQL_DATABASE: kaddem
+      MYSQL_USER: root
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
     ports:
       - "3306:3306"

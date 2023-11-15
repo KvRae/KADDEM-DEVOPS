@@ -5,6 +5,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.boot.test.context.SpringBootTest;
 import tn.esprit.spring.kaddem.entities.Departement;
 import tn.esprit.spring.kaddem.repositories.DepartementRepository;
 import java.util.Arrays;
@@ -15,6 +16,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
+@SpringBootTest(properties = "spring.config.name=application-test")
 public class DepartementServiceImplTest {
 
     @Mock
@@ -22,7 +24,6 @@ public class DepartementServiceImplTest {
 
     @InjectMocks
     private DepartementServiceImpl departementService;
-
     @Test
     public void testRetrieveAllDepartements() {
         // Arrange

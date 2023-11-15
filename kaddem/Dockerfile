@@ -1,5 +1,14 @@
-FROM openjdk:17-jdk
+# Use an OpenJDK runtime as a base image
+FROM openjdk:11
+
+# Set the working directory within the container
 WORKDIR /app
-COPY kaddem-2.1.jar tn/esprit/spring/kaddem/2.1/kaddem-2.1.jar
-EXPOSE 8086
+
+# Copy the JAR file into the container at /app
+COPY target/kaddem-2.1.jar /app/
+
+# Expose the port your app runs on
+EXPOSE 8082
+
+# Command to run your application
 CMD ["java", "-jar", "kaddem-2.1.jar"]

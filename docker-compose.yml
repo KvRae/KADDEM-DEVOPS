@@ -1,26 +1,37 @@
-version: "3.8"
-
+version: '3'
 services:
-  mysqldb:
-    image: mysql:5.7
+  mysql:
+    image: 'mysql:5.7'
     restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: kaddem
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
     ports:
-      - "3307:3306"
+      - "3306:3306"
+    networks:
+      - mynetwork
     volumes:
       - db:/var/lib/mysql
 
-  kaddem-backend:
-    depends_on:
-      - mysqldb
-    build: ./kaddem
+  # Spring Boot Application Service
+  spring-app:
+    image: kvrae/kaddem:latest
     restart: on-failure
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/kaddem?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=utf-8&autoReconnect=true&useSSL=false
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ""
     ports:
-      - "6868:8082"
-    volumes:
-      - .m2:/root/.m2
-    stdin_open: true
-    tty: true
+      - "6868:8089"
+
+    depends_on:
+      - mysql
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    driver: bridge
 
 volumes:
   db:
-  .m2:

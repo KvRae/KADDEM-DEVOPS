@@ -5,7 +5,6 @@ services:
     container_name: mysqldb
     restart: unless-stopped
     environment:
-      MYSQL_DATABASE: kaddem
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
     ports:
       - "3306:3306"
@@ -18,12 +17,8 @@ services:
   spring-app:
     image: kvrae/kaddem:${BUILD_NUMBER}
     restart: on-failure
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/kaddem?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=utf-8&autoReconnect=true&useSSL=false
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: ""
     ports:
-      - "6868:8089"
+      - "8089:8089"
 
     depends_on:
       - mysqldb

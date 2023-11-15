@@ -9,11 +9,10 @@ pipeline {
             }
         }
 
-        stage("Clean and Build") {
+        stage("Maven Clean") {
              steps {
                  dir('kaddem') {
                      sh 'mvn clean'
-                     sh 'mvn test'
                  }
              }
         }

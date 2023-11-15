@@ -32,7 +32,7 @@ pipeline {
 
         stage('Run Unit Tests'){
             steps{
-                dir('kaddel'){
+                dir('kaddem'){
                     sh 'mvn test'
                 }
             }

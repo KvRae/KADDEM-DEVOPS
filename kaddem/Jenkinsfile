@@ -94,7 +94,7 @@ stage('Deploiment Artifact a Nexus') {
         }
         stage('Email Notification') {
             steps {
-                emailext body: 'Pip Went Successful ! ', subject: 'Nouveau commit sur GitHub', to: 'karam.mannai@esprit.tn'
+                emailext body: 'Pipline Went Successful ! ', subject: 'Nouveau commit sur GitHub', to: 'karam.mannai@esprit.tn'
             }
         }
     }

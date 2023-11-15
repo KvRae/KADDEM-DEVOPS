@@ -1,11 +1,10 @@
 version: '3'
 services:
-  mysql:
-    image: 'mysql:8.0'
+  mysqldb:
+    image: 'mysql:5.7'
     restart: unless-stopped
     environment:
       MYSQL_DATABASE: kaddem
-      MYSQL_USER: root
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
     ports:
       - "3306:3306"
@@ -14,15 +13,19 @@ services:
     volumes:
       - db:/var/lib/mysql
 
-  # Spring Boot Application Service
+
   spring-app:
     image: kvrae/kaddem:${BUILD_NUMBER}
     restart: on-failure
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb:3306/kaddem?createDatabaseIfNotExist=true&useUnicode=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD:
     ports:
       - "6868:8089"
 
     depends_on:
-      - mysql
+      - mysqldb
     networks:
       - mynetwork
 

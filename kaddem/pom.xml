@@ -16,7 +16,6 @@
     <properties>
         <java.version>1.8</java.version>
         <sonar.host.url>http://localhost:9000</sonar.host.url>
-        <sonar.token>sqa_daffa56f2d2134f017b5add8ce8c4b9ba9e6ffaf</sonar.token>
     </properties>
     <dependencies>
         <dependency>
@@ -48,9 +47,14 @@
             <artifactId>springdoc-openapi-ui</artifactId>
             <version>1.6.9</version>
         </dependency>
-
     </dependencies>
-
+    <distributionManagement>
+        <repository>
+            <id>deploymentRepo</id>
+            <name>Nexus Repository</name>
+            <url>http://localhost:8081/repository/maven-releases/</url>
+        </repository>
+    </distributionManagement>
     <build>
         <plugins>
             <plugin>

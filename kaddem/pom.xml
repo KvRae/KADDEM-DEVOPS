@@ -15,7 +15,7 @@
     <description>kaddem</description>
     <properties>
         <java.version>1.8</java.version>
-        <sonar.host.url>http://localhost:9000</sonar.host.url>
+        <sonar.host.url>http://192.168.33.10:9000</sonar.host.url>
     </properties>
     <dependencies>
         <dependency>
@@ -48,6 +48,13 @@
             <version>1.6.9</version>
         </dependency>
     </dependencies>
+    <distributionManagement>
+        <repository>
+            <id>deploymentRepo</id>
+            <name>Nexus Repository</name>
+            <url>http://192.168.33.10:8081/repository/maven-releases/</url>
+        </repository>
+    </distributionManagement>
     <build>
         <plugins>
             <plugin>

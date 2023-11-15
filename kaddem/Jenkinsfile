@@ -22,7 +22,7 @@ pipeline {
             steps {
                 dir('kaddem') {
                     withSonarQubeEnv('sonarserver') {
-                         sh 'mvn sonar:sonar -X'
+                         sh 'mvn sonar:sonar'
                     }
                 }
             }

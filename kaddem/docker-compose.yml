@@ -5,7 +5,7 @@ services:
     container_name: mysql
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: yes
-      MYSQL_DATABASE: devops
+      MYSQL_DATABASE: kaddemdb
     ports:
       - 3306:3306
     networks:

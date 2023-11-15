@@ -1,28 +1,33 @@
-version: '3'
+version: "3"
+
 services:
   mysqldb:
-    image: mysql:8.0
     container_name: mysqldb
+    image: mysql:8.0
+    restart: unless-stopped
+    ports:
+      - "3307:3306"
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-    ports:
-      - "3306:3306"
     volumes:
-      - mysql-data:/var/lib/mysql
+      - db:/var/lib/mysql
     networks:
-      - mynetwork
+      - my-network
 
-  spring-app:
-    container_name: spring-app
+  backend-spring:
+    container_name: kaddem-spring
     image: kvrae/kaddem:${BUILD_NUMBER}
     depends_on:
       - mysqldb
+    restart: on-failure
     ports:
       - "8089:8089"
     networks:
-      - mynetwork
+      - my-network
+
 networks:
-  mynetwork:
+  my-network:
     driver: bridge
+
 volumes:
-  mysql-data:
+  db:

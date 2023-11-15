@@ -1,7 +1,8 @@
 version: '3'
 services:
-  mysql:
+  mysqldb:
     image: mysql:8.0
+    container_name: mysqldb
     restart: unless-stopped
     environment:
       MYSQL_DATABASE: kaddem
@@ -25,7 +26,7 @@ services:
       - "6868:8089"
 
     depends_on:
-      - mysql
+      - mysqldb
     networks:
       - mynetwork
 

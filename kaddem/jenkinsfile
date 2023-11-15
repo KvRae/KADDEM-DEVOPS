@@ -30,7 +30,14 @@ pipeline {
             }
         }
 
+        stage('Run Unit Tests'){
+            steps{
+                dir('kaddem'){
+                    sh 'mvn test'
+                }
+            }
 
+        }
 
         stage('MVN Nexus') {
                    steps {

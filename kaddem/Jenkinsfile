@@ -38,14 +38,20 @@ pipeline {
             }
         }
 
-        stage('Deploiment Artifact a Nexus') {
-           steps {
-               // Change the working directory to the 'kaddem' subdirectory
-                dir('kaddem') {
-                    sh "mvn deploy -DskipTests"
-                }
-           }
+stage('Deploiment Artifact a Nexus') {
+    steps {
+        script {
+            // Change the working directory to the 'kaddem' subdirectory
+            dir('kaddem') {
+                def nexusApiUrl = "http://192.168.33.10:8081/service/rest/v1/repository/maven-releases/tn/"
+                def nexusUsername = credentials('Nexus')
+                def nexusPassword = credentials('Nexus')
+                sh "curl -X DELETE -u ${nexusUsername}:${nexusPassword} ${nexusApiUrl}"
+                sh "mvn deploy -DskipTests"
+            }
         }
+    }
+}
 
         stage('Build image Docker ') {
             steps {

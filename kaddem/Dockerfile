@@ -1,14 +1,14 @@
-# Use an OpenJDK runtime as a base image
+# Utilisez une image Java officielle en tant qu'image parente
 FROM openjdk:11
 
-# Set the working directory within the container
+# Définissez le répertoire de travail dans le conteneur
 WORKDIR /app
 
-# Copy the JAR file into the container at /app
-COPY target/kaddem-2.1.jar /app/
+# Utilisez curl pour télécharger le fichier JAR depuis Nexus
+RUN curl -o kaddem-2.1.jar -L http://192.168.33.10:8081/repository/maven-releases/tn/esprit/spring/kaddem/2.1/kaddem-2.1.jar
 
-# Expose the port your app runs on
+# Exposez le port sur lequel votre application s'exécute
 EXPOSE 8082
 
-# Command to run your application
+# Définissez la commande pour exécuter votre application
 CMD ["java", "-jar", "kaddem-2.1.jar"]

@@ -45,6 +45,15 @@ pipeline {
              }
          }
 
+         stage('Docker') {
+               steps {
+                    dir('kaddem') {
+                        script {
+                             docker.build("fedi/kaddem:${env.BUILD_NUMBER}")
+                        }
+                    }
+               }
+         }
 
 
     }

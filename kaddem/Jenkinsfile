@@ -24,6 +24,7 @@ pipeline {
                  }
              }
         }
+
         stage("SonarQube analysis") {
             steps {
                 dir('kaddem') {

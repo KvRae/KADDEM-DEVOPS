@@ -1,0 +1,24 @@
+version: '3'
+services:
+  database:
+    image: mysql
+    container_name: mysql
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: yes
+      MYSQL_DATABASE: devops
+    ports:
+      - 3306:3306
+    networks:
+      - projectnetwork
+  spring-boot:
+    image: yassinkhabthani/kaddem:1.0
+    container_name: spring
+    ports:
+      - 8082:8082
+    depends_on:
+      - database
+    networks:
+      - projectnetwork
+    restart: on-failure
+networks:
+  projectnetwork:

@@ -30,20 +30,18 @@ pipeline {
             }
         }
 
-        stages {
-
-
-                stage('Run Unit Tests') {
-                    steps {
-                        dir('kaddem') {
-                            sh 'mvn test'
-                        }
-                    }
+        stage('Run Unit Tests'){
+            steps{
+                dir('kaddel'){
+                    sh 'mvn test'
                 }
+            }
+
+        }
 
         stage('MVN Nexus') {
                    steps {
-                       // Change the working directory to the 'kaddem' subdirectory
+
                         dir('kaddem') {
                             sh "mvn deploy -DskipTests"
                         }

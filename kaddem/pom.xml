@@ -10,7 +10,7 @@
     </parent>
     <groupId>tn.esprit.spring</groupId>
     <artifactId>kaddem</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>SNAPSHOT-01</version>
     <name>kaddem</name>
     <description>kaddem</description>
     <properties>
@@ -49,27 +49,7 @@
 
     </dependencies>
 
-    <build>
-
-                <pluginManagement>
-                        <plugins>
-                                <plugin>
-                                        <groupId>org.apache.maven.plugins</groupId>
-                                        <artifactId>maven-deploy-plugin</artifactId>
-                                        <version>2.8.2</version>
-                                </plugin>
-
-                                <plugin>
-                                        <groupId>org.sonarsource.scanner.maven</groupId>
-                                        <artifactId>sonar-maven-plugin</artifactId>
-                                        <version>3.10.0.2594</version>
-                                </plugin>
-
-
-
-                        </plugins>
-                </pluginManagement>
-        <plugins>
+    
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>

@@ -1,8 +1,4 @@
-FROM openjdk:11
-
-COPY kaddem-2.1.jar tn/esprit/spring/kaddem/2.1/kaddem-2.1.jar
-
+FROM openjdk11:alpine-jre
 EXPOSE 8082
-
-ENTRYPOINT ["java", "-jar", "/app/kaddem-2.1.jar"]
-
+COPY target/kaddem-2.1.jar kaddem-2.1.jar
+ENTRYPOINT ["java","-jar","/kaddem-2.1.jar"]

@@ -18,7 +18,7 @@ pipeline {
             }
         }
 
-        stage('Tests unitaires avec JUnit') {
+        stage('Tests unitaires avec JUnit & Mockito') {
            steps {
                // Change the working directory to the 'kaddem' subdirectory
                 dir('kaddem') {
@@ -38,20 +38,26 @@ pipeline {
             }
         }
 
-stage('Deploiment Artifact a Nexus') {
-    steps {
-        script {
-            // Change the working directory to the 'kaddem' subdirectory
-            dir('kaddem') {
-                def nexusApiUrl = "http://192.168.33.10:8081/service/rest/v1/repository/maven-releases/tn/"
-                def nexusUsername = credentials('Nexus')
-                def nexusPassword = credentials('Nexus')
-                sh "curl -X DELETE -u ${nexusUsername}:${nexusPassword} ${nexusApiUrl}"
-                sh "mvn deploy -DskipTests"
+        stage('Package Artifact ') {
+           steps {
+                dir('kaddem') {
+                    sh "mvn package -DskipTests"
+                }
+           }
+        }
+
+
+
+        stage('Deploiment Artifact a Nexus') {
+            steps {
+                script {
+                    // Change the working directory to the 'kaddem' subdirectory
+                    dir('kaddem') {
+                        sh "mvn deploy -DskipTests"
+                    }
+                }
             }
         }
-    }
-}
 
         stage('Build image Docker ') {
             steps {
@@ -78,23 +84,27 @@ stage('Deploiment Artifact a Nexus') {
         stage('Run Docker Compose') {
             steps {
                 script {
-                    sh 'docker-compose pull'
+                    sh 'docker compose pull'
                     sh 'docker compose up -d'
                 }
             }
         }
 
-        stage('Prometheus & Grafana') {
-            steps {
-                script {
-                   sh 'sudo docker start prometheus'
-                   sh 'sudo docker start grafana'
-                }
-            }
-        }
         stage('Email Notification') {
             steps {
-                emailext body: 'Pipline Went Successful ! ', subject: 'Nouveau commit sur GitHub', to: 'karam.mannai@esprit.tn'
+                script {
+                    currentBuild.result = 'SUCCESS'
+                    emailext(
+                        subject: "Build #${currentBuild.number} Successful: ${currentBuild.fullDisplayName}",
+                        body: """
+                            The build was successful!
+                            Build Details: ${BUILD_URL}
+                            Build Number: ${currentBuild.number}
+                            Build Status: ${currentBuild.currentResult}
+                        """,
+                        to: 'karam.mannai@esprit.tn'
+                    )
+                }
             }
         }
     }

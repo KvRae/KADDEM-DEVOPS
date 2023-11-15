@@ -22,10 +22,8 @@ pipeline {
         stage("SonarQube analysis") {
             steps {
                 dir('kaddem') {
-                    withCredentials([string(credentialsId: 'sonartoken', variable: 'SONAR_TOKEN')]) {
-                        withSonarQubeEnv('sonarserver') {
-                            sh "mvn sonar:sonar -Dsonar.login=${SONAR_TOKEN}"
-                        }
+                    withSonarQubeEnv('sonarserver') {
+                        sh 'mvn sonar:sonar'
                     }
                 }
             }

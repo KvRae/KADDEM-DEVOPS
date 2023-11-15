@@ -11,16 +11,20 @@ pipeline {
 
         stage("Clean and Build") {
              steps {
-                 sh 'mvn clean'
-                 sh 'mvn test'
+                 dir('kaddem') {
+                     sh 'mvn clean'
+                     sh 'mvn test'
+                 }
              }
         }
 
 
         stage("SonarQube analysis") {
               steps {
-                  withSonarQubeEnv('sonarQubeServer') {
-                      sh "mvn sonar:sonar"
+                  dir('kaddem') {
+                      withSonarQubeEnv('sonarQubeServer') {
+                         sh "mvn sonar:sonar"
+                      }
                   }
               }
         }

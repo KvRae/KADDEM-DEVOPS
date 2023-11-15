@@ -20,8 +20,7 @@ pipeline {
         stage("SonarQube analysis") {
               steps {
                   withSonarQubeEnv('sonarQubeServer') {
-                      sh 'mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent -Djacoco.version=0.8.8 test jacoco:report'
-                      sh "mvn sonar:sonar -Dsonar.jacoco.reportPaths=target/site/jacoco/jacoco.xml"
+                      sh "mvn sonar:sonar"
                   }
               }
         }

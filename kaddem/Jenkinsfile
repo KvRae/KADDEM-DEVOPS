@@ -30,5 +30,16 @@ pipeline {
                 }
             }
         }
+
+         stage('Nexus') {
+             steps {
+                 dir('kaddem') {
+                     sh "mvn deploy -DskipTests"
+                 }
+             }
+         }
+
+
+
     }
 }

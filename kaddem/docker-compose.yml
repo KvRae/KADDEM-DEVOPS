@@ -5,7 +5,7 @@ services:
     container_name: mysql-container
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: kaddemdb
+      MYSQL_DATABASE: kaddem
       MYSQL_USER: user
       MYSQL_PASSWORD: user
     ports:

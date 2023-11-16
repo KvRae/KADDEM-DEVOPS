@@ -55,9 +55,7 @@ pipeline {
         stage('Docker Build'){
             steps{
                 dir('kaddem'){
-                    script{
-                        docker build -t registry
-                    }
+                    sh "docker build -t yassinearidhi/yassine_aridhi_5sim1_g2_kaddem:1.00 ."
                 }
             }
         }

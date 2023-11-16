@@ -53,7 +53,7 @@ pipeline {
         stage('Docker Build'){
             steps{
                 dir('kaddem'){
-                    sh "docker build yassinearidhi/yassine_aridhi_5sim1_g2_kaddem:1.00 ."
+                    sh "docker build -t yassinearidhi/yassine_aridhi_5sim1_g2_kaddem:1.00 ."
                 }
             }
         }

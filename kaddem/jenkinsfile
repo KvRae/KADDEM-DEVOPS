@@ -2,7 +2,9 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_HUB_CREDENTIALS = credentials('yassine-dockerhub') // Add your Docker Hub credentials ID
+        dockerImage = ''
+        registry ='yassinearidhi/yassine_aridhi_5sim1_g2_kaddem'
+        DOCKER_HUB_CREDENTIALS = 'new-cred' // Add your Docker Hub credentials ID
         DOCKER_IMAGE_NAME = 'yassinearidhi/yassine_aridhi_5sim1_g2_kaddem'
         DOCKER_IMAGE_TAG = '1.00' // Change to your desired tag
     }
@@ -53,21 +55,20 @@ pipeline {
         stage('Docker Build'){
             steps{
                 dir('kaddem'){
-                    sh "docker build -t yassinearidhi/yassine_aridhi_5sim1_g2_kaddem:1.00 ."
+                    script{
+                        docker buid -t registry
+                    }
                 }
             }
         }
 
-        stage('Login'){
-            steps{
-                sh "echo $DOCKER_HUB_CREDENTIALS_PSW | docker login -u £DOCKER_HUB_CREDENTIALS_USR --password-stdin"
-            }
-        }
+
 
         stage('PUSH'){
             steps{
-                dir('kaddem'){
-                    sh "docker push yassinearidhi/yassine_aridhi_5sim1_g2_kaddem:1.00"
+                script {
+                    docker.withRegistry('',DOCKER_HUB_CREDENTIALS)
+                    dockerImage.push()
                 }
             }
         }

@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         dockerImage = ''
-        registry ='yassinearidhi/yassine_aridhi_5sim1_g2_kaddem'
+        registry ='yassinearidhi/yassine_aridhi_5sim1_g2_kaddem:1.00'
         cred_id= 'new-cred' // Add your Docker Hub credentials ID
 
     }
@@ -69,5 +69,17 @@ pipeline {
                 }
             }
         }
+
+        stage("pushing image to docker hub") {
+                     steps {
+                         script {
+                            withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'yassinearidhi', passwordVariable: 'yassine.24081999')]) {
+                            sh "echo $PASS | docker login -u $USER --password-stdin"
+                            sh 'docker push yassinearidhi/yassine_aridhi_5sim1_g2_kaddem:1.00'
+
+                            }
+                         }
+                     }
+                 }
     }
 }

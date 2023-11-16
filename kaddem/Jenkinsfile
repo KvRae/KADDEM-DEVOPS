@@ -32,6 +32,7 @@ pipeline {
                 // Change the working directory to the 'kaddem' subdirectory
                 dir('kaddem') {
                     withSonarQubeEnv('SonarQube') {
+                        sh 'mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent -Djacoco.version=0.8.8 test jacoco:report'
                         sh 'mvn sonar:sonar'
                     }
                 }

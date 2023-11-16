@@ -2,10 +2,10 @@ pipeline {
     agent any
 
     environment {
-            DOCKER_HUB_CREDENTIALS = credentials('dckr_pat_IWdFyWT0zRzJ6kRLQWud5AK219c') // Add your Docker Hub credentials ID
-            DOCKER_IMAGE_NAME = 'yassinearidhi/yassine_aridhi_5sim1_g2_kaddem'
-            DOCKER_IMAGE_TAG = '1.00' // Change to your desired tag
-        }
+        DOCKER_HUB_CREDENTIALS = credentials('dckr_pat_IWdFyWT0zRzJ6kRLQWud5AK219c') // Add your Docker Hub credentials ID
+        DOCKER_IMAGE_NAME = 'yassinearidhi/yassine_aridhi_5sim1_g2_kaddem'
+        DOCKER_IMAGE_TAG = '1.00' // Change to your desired tag
+    }
 
     stages {
         stage('Checkout GIT') {
@@ -24,60 +24,45 @@ pipeline {
             }
         }
 
-         stage('MVN SONARQUBE') {
+        stage('MVN SONARQUBE') {
             steps {
-                    dir('kaddem'){
-                        withSonarQubeEnv('sonarqube') {
-                            sh 'mvn sonar:sonar'
-                        }
+                dir('kaddem') {
+                    withSonarQubeEnv('sonarqube') {
+                        sh 'mvn sonar:sonar'
                     }
-
-
+                }
             }
         }
 
-        stage('Run Unit Tests'){
-            steps{
-                dir('kaddem'){
+        stage('Run Unit Tests') {
+            steps {
+                dir('kaddem') {
                     sh 'mvn test'
                 }
             }
-
         }
 
         stage('MVN Nexus') {
-                   steps {
-
-                        dir('kaddem') {
-                            sh "mvn deploy -DskipTests"
-                        }
-                   }
+            steps {
+                dir('kaddem') {
+                    sh "mvn deploy -DskipTests"
+                }
+            }
         }
 
-        stages {
-                stage('Build') {
-                    steps {
-                        script {
-                            // Build the Docker image
-                            dockerImage = docker.build("${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}")
-                        }
+        stage('Build and Push Docker Image') {
+            steps {
+                script {
+                    // Build the Docker image
+                    dockerImage = docker.build("${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}")
+
+                    // Log in to Docker Hub
+                    docker.withRegistry('https://registry.hub.docker.com', DOCKER_HUB_CREDENTIALS) {
+                        // Push the Docker image to Docker Hub
+                        dockerImage.push("${DOCKER_IMAGE_TAG}")
                     }
                 }
-
-                stage('Push') {
-                    steps {
-                        script {
-                            // Log in to Docker Hub
-                            docker.withRegistry('https://registry.hub.docker.com', DOCKER_HUB_CREDENTIALS) {
-                                // Push the Docker image to Docker Hub
-                                dockerImage.push("${DOCKER_IMAGE_TAG}")
-                            }
-                        }
-
-                }    }
-
-
-
-
+            }
+        }
     }
 }

@@ -65,19 +65,19 @@ pipeline {
          }
 
 
-       /*stage('Docker Hub') {
+       stage('Docker Hub') {
             steps {
                 dir('kaddem') {
                     script {
                         docker.withRegistry('https://registry.hub.docker.com', DOCKERHUB_CREDENTIALS) {
-                            docker.image("fedi/kaddem:${env.BUILD_NUMBER}").push()
+                            docker.image("fediabdennabi/kaddem:lts").push()
                         }
                     }
                 }
             }
-        } */
+        }
 
-         stage('Push vers DockerHub') {
+        /* stage('Push vers DockerHub') {
             steps {
                 script {
                     def dockerTag = ":${env.BUILD_NUMBER}"
@@ -88,14 +88,15 @@ pipeline {
 
                 }
             }
-        }
+        }*/
 
-        stage('Pre-Prod (Docker Compose)'){
+
+        stage('Pre-Prod (Docker Compose)') {
             steps {
                 sh "docker logout"
                 sh "docker login -u ${DOCKERHUB_USR} -p ${DOCKERHUB_PSW}"
-                sh "docker compose up -d"
-            }
+                sh "docker compose -f kaddem/docker-compose.yml up -d"
+             }
         }
 
         stage('Prometheus'){
@@ -110,5 +111,14 @@ pipeline {
             }
         }
 
+    }
+    post{
+        success{
+            mail bcc: '', body: "Project: ${env.JOB_NAME} <br>Build Number: ${env.BUILD_NUMBER}", cc: '', charset: 'UTF-8', from: '', mimeType: 'text/html', replyTo: '', subject: "SUCCESS CI: Project name -> ${env.JOB_NAME}", to: "fedi.abdennabi@esprit.tn";
+
+        }
+        failure {
+            mail bcc: '', body: "Project: ${env.JOB_NAME} <br>Build Number: ${env.BUILD_NUMBER}", cc: '', charset: 'UTF-8', from: '', mimeType: 'text/html', replyTo: '', subject: "FAILED CI: Project name -> ${env.JOB_NAME}", to: "fedi.abdennabi@esprit.tn";
+         }
     }
 }

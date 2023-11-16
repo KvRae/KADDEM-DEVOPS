@@ -4,9 +4,8 @@ pipeline {
     environment {
         dockerImage = ''
         registry ='yassinearidhi/yassine_aridhi_5sim1_g2_kaddem'
-        DOCKER_HUB_CREDENTIALS = 'new-cred' // Add your Docker Hub credentials ID
-        DOCKER_IMAGE_NAME = 'yassinearidhi/yassine_aridhi_5sim1_g2_kaddem'
-        DOCKER_IMAGE_TAG = '1.00' // Change to your desired tag
+        cred_id= 'new-cred' // Add your Docker Hub credentials ID
+
     }
 
     stages {
@@ -65,15 +64,10 @@ pipeline {
         stage('PUSH'){
             steps{
                 script {
-                    docker.withRegistry('',DOCKER_HUB_CREDENTIALS)
+                    docker.withRegistry('',cred_id)
                     dockerImage.push()
                 }
             }
-        }
-    }
-    post {
-        always {
-            sh 'docker logout'
         }
     }
 }

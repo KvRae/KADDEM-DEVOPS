@@ -56,7 +56,7 @@ pipeline {
             steps{
                 dir('kaddem'){
                     script{
-                        docker buid -t registry
+                        docker build -t registry
                     }
                 }
             }

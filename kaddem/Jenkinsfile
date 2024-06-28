@@ -1,124 +1,128 @@
 pipeline {
     agent any
-
-    environment {
-        DOCKERHUB_CREDENTIALS = 'fediabdennabi-testest'
-        DOCKERHUB_USR = 'fediabdennabi'
-        DOCKERHUB_PSW = 'dckr_pat_BysrQD8c5VVimUx5IHWxBdGbG8g'
-
-    }
-
     stages {
-        stage('Récupération du Code') {
+        stage('Récupération du code de GitHub') {
             steps {
-                sh 'git checkout FediAbdennabi-5SIM1-G2'
-                sh 'git pull origin FediAbdennabi-5SIM1-G2'
+                git branch: 'karamMANNAI-5SIM1-G2', credentialsId: 'Git', url: 'https://github.com/KvRae/5SIM1-G2-KADDEM.git'
+                sh 'git pull origin karamMANNAI-5SIM1-G2'
             }
         }
 
-        stage("Lancement de Maven") {
-             steps {
-                 dir('kaddem') {
-                     sh 'mvn clean'
-                 }
-             }
-        }
-
-        stage("Test Mockito") {
-             steps {
-                 dir('kaddem') {
-                     sh 'mvn test'
-                 }
-             }
-        }
-
-        stage("Analyse avec SonarQube") {
+        stage('Build avec Maven') {
             steps {
+                // Change the working directory to the 'kaddem' subdirectory
                 dir('kaddem') {
-                    withSonarQubeEnv('sonarserver') {
-                        sh 'mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=f94047233'
-                    }
-
+                    sh 'mvn clean install'
                 }
             }
         }
 
+        stage('Tests unitaires avec JUnit & Mockito') {
+           steps {
+               // Change the working directory to the 'kaddem' subdirectory
+                dir('kaddem') {
+                    sh 'mvn test'
+                }
+           }
+        }
 
-         stage('Déploiement Nexus') {
-             steps {
-                 dir('kaddem') {
-                     sh "mvn deploy -DskipTests"
-                 }
-             }
-         }
-
-
-           stage('Création image Docker') {
-               steps {
-                    dir('kaddem') {
-                        script {
-                            def dockerTag = "${DOCKERHUB_USR}/kaddem:lts"
-                            sh "docker build -t $dockerTag ."
-                        }
+        stage('Analyse de code avec SonarQube') {
+            steps {
+                // Change the working directory to the 'kaddem' subdirectory
+                dir('kaddem') {
+                    withSonarQubeEnv('SonarQube') {
+                        sh 'mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent -Djacoco.version=0.8.8 test jacoco:report'
+                        sh 'mvn sonar:sonar'
                     }
-               }
-         }
+                }
+            }
+        }
+
+        stage('Package Artifact ') {
+           steps {
+                dir('kaddem') {
+                    sh "mvn package -DskipTests"
+                }
+           }
+        }
 
 
-       stage('Docker Hub') {
+
+        stage('Deploiment Artifact a Nexus') {
+            steps {
+                script {
+                    // Change the working directory to the 'kaddem' subdirectory
+                    dir('kaddem') {
+                        sh "mvn deploy -DskipTests"
+                    }
+                }
+            }
+        }
+
+        stage('Build image Docker ') {
             steps {
                 dir('kaddem') {
                     script {
-                        docker.withRegistry('https://registry.hub.docker.com', DOCKERHUB_CREDENTIALS) {
-                            docker.image("fediabdennabi/kaddem:lts").push()
+                        docker.build("kvrae/kaddem:${env.BUILD_NUMBER}")
+                    }
+                }
+            }
+        }
+
+        stage('Push To Docker Hub') {
+            steps {
+                dir('kaddem'){
+                    script {
+                        docker.withRegistry('https://registry.hub.docker.com', 'Docker') {
+                            docker.image("kvrae/kaddem:${env.BUILD_NUMBER}").push()
                         }
                     }
                 }
             }
         }
 
-        /* stage('Push vers DockerHub') {
+        stage('Run Docker Compose') {
             steps {
                 script {
-                    def dockerTag = ":${env.BUILD_NUMBER}"
-                    sh "docker logout"
-                    sh "docker login -u ${DOCKERHUB_USR} -p ${DOCKERHUB_PSW}"
-
-                    sh "docker push ${DOCKERHUB_USR}/kaddem:lts"
-
+                    sh 'docker compose pull'
+                    sh 'docker compose up -d'
                 }
             }
-        }*/
-
-
-        stage('Pre-Prod (Docker Compose)') {
-            steps {
-                sh "docker logout"
-                sh "docker login -u ${DOCKERHUB_USR} -p ${DOCKERHUB_PSW}"
-                sh "docker compose -f kaddem/docker-compose.yml up -d"
-             }
         }
 
-        stage('Prometheus'){
+        stage('Email Notification') {
             steps {
-                sh "docker start prometheus"
+                script {
+                    currentBuild.result = 'SUCCESS'
+                    emailext(
+                        subject: "Build #${currentBuild.number} Successful: ${currentBuild.fullDisplayName}",
+                        body: """
+                            The build was successful!
+                            Build Details: ${BUILD_URL}
+                            Build Number: ${currentBuild.number}
+                            Build Status: ${currentBuild.currentResult}
+                        """,
+                        to: 'karam.mannai@esprit.tn'
+                    )
+                }
             }
         }
-
-        stage('Grafana'){
-            steps {
-                sh "docker start grafana"
-            }
-        }
-
     }
-    post{
-        success{
-            mail bcc: '', body: "Project: ${env.JOB_NAME} <br>Build Number: ${env.BUILD_NUMBER}", cc: '', charset: 'UTF-8', from: '', mimeType: 'text/html', replyTo: '', subject: "SUCCESS CI: Project name -> ${env.JOB_NAME}", to: "fedi.abdennabi@esprit.tn";
-
-        }
-        failure {
-            mail bcc: '', body: "Project: ${env.JOB_NAME} <br>Build Number: ${env.BUILD_NUMBER}", cc: '', charset: 'UTF-8', from: '', mimeType: 'text/html', replyTo: '', subject: "FAILED CI: Project name -> ${env.JOB_NAME}", to: "fedi.abdennabi@esprit.tn";
-         }
+    post {
+       success {
+           emailext (
+           subject: "Build Successful",
+           body: "The build was successful. Job: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+           to: "karam.mannai@esprit.tn"
+                                )
+                            }
+       failure {
+           emailext (
+           subject: "Build Failed",
+            body: "The build failed. Job: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}\n\nConsole Output:\n${currentBuild.rawBuild.getLog(100)}",
+            to: to: "karam.mannai@esprit.tn",
+             attachLog: true
+            )
+       }
     }
 }

@@ -1,14 +1,10 @@
-# Utilisez une image Java officielle en tant qu'image parente
 FROM openjdk:11
 
-# Définissez le répertoire de travail dans le conteneur
-WORKDIR /app
+EXPOSE 8089
 
-# Utilisez curl pour télécharger le fichier JAR depuis Nexus
-RUN curl -o kaddem-2.1.jar -L http://192.168.33.10:8081/repository/maven-releases/tn/esprit/spring/kaddem/2.1/kaddem-2.1.jar
+# Download the JAR from the remote repository
+RUN curl -o kaddem.jar -L "http://192.168.33.10:8081/repository/maven-releases/tn/esprit/spring/kaddem/0.0.1/kaddem-0.0.1.jar"
 
-# Exposez le port sur lequel votre application s'exécute
-EXPOSE 8082
+# Set the entry point to run the application
+ENTRYPOINT ["java", "-jar", "kaddem.jar"]
 
-# Définissez la commande pour exécuter votre application
-CMD ["java", "-jar", "kaddem-2.1.jar"]

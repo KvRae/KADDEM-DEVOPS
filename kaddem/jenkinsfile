@@ -1,0 +1,73 @@
+pipeline {
+    agent any
+
+    environment {
+        dockerImage = ''
+        registry ='yassinearidhi/yassine_aridhi_5sim1_g2_kaddem'
+        cred_id= 'new-cred' // Add your Docker Hub credentials ID
+
+    }
+
+    stages {
+        stage('Checkout GIT') {
+            steps {
+                echo 'Pulling...'
+                git branch: 'yassineAridhi_5sim1_G2', url: 'https://github.com/KvRae/5SIM1-G2-KADDEM.git'
+            }
+        }
+
+        stage('Build avec Maven') {
+            steps {
+                // Change the working directory to the 'kaddem' subdirectory
+                dir('kaddem') {
+                    sh 'mvn clean compile'
+                }
+            }
+        }
+
+        stage('MVN SONARQUBE') {
+            steps {
+                dir('kaddem') {
+                    withSonarQubeEnv('sonarqube') {
+                        sh 'mvn sonar:sonar'
+                    }
+                }
+            }
+        }
+
+        stage('Run Unit Tests') {
+            steps {
+                dir('kaddem') {
+                    sh 'mvn test'
+                }
+            }
+        }
+
+        stage('MVN Nexus') {
+            steps {
+                dir('kaddem') {
+                    sh "mvn deploy -DskipTests"
+                }
+            }
+        }
+
+        stage('Docker Build'){
+            steps{
+                dir('kaddem'){
+                    sh "docker build -t yassinearidhi/yassine_aridhi_5sim1_g2_kaddem:1.00 ."
+                }
+            }
+        }
+
+
+
+//         stage('PUSH'){
+//             steps{
+//                 script {
+//                     docker.withRegistry('',cred_id)
+//                     dockerImage.push()
+//                 }
+//             }
+//         }
+    }
+}

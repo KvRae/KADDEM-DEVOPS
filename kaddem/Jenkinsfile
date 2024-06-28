@@ -1,0 +1,128 @@
+pipeline {
+    agent any
+    stages {
+        stage('Récupération du code de GitHub') {
+            steps {
+                git branch: 'karamMANNAI-5SIM1-G2', credentialsId: 'Git', url: 'https://github.com/KvRae/5SIM1-G2-KADDEM.git'
+                sh 'git pull origin karamMANNAI-5SIM1-G2'
+            }
+        }
+
+        stage('Build avec Maven') {
+            steps {
+                // Change the working directory to the 'kaddem' subdirectory
+                dir('kaddem') {
+                    sh 'mvn clean install'
+                }
+            }
+        }
+
+        stage('Tests unitaires avec JUnit & Mockito') {
+           steps {
+               // Change the working directory to the 'kaddem' subdirectory
+                dir('kaddem') {
+                    sh 'mvn test'
+                }
+           }
+        }
+
+        stage('Analyse de code avec SonarQube') {
+            steps {
+                // Change the working directory to the 'kaddem' subdirectory
+                dir('kaddem') {
+                    withSonarQubeEnv('SonarQube') {
+                        sh 'mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent -Djacoco.version=0.8.8 test jacoco:report'
+                        sh 'mvn sonar:sonar'
+                    }
+                }
+            }
+        }
+
+        stage('Package Artifact ') {
+           steps {
+                dir('kaddem') {
+                    sh "mvn package -DskipTests"
+                }
+           }
+        }
+
+
+
+        stage('Deploiment Artifact a Nexus') {
+            steps {
+                script {
+                    // Change the working directory to the 'kaddem' subdirectory
+                    dir('kaddem') {
+                        sh "mvn deploy -DskipTests"
+                    }
+                }
+            }
+        }
+
+        stage('Build image Docker ') {
+            steps {
+                dir('kaddem') {
+                    script {
+                        docker.build("kvrae/kaddem:${env.BUILD_NUMBER}")
+                    }
+                }
+            }
+        }
+
+        stage('Push To Docker Hub') {
+            steps {
+                dir('kaddem'){
+                    script {
+                        docker.withRegistry('https://registry.hub.docker.com', 'Docker') {
+                            docker.image("kvrae/kaddem:${env.BUILD_NUMBER}").push()
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Run Docker Compose') {
+            steps {
+                script {
+                    sh 'docker compose pull'
+                    sh 'docker compose up -d'
+                }
+            }
+        }
+
+        stage('Email Notification') {
+            steps {
+                script {
+                    currentBuild.result = 'SUCCESS'
+                    emailext(
+                        subject: "Build #${currentBuild.number} Successful: ${currentBuild.fullDisplayName}",
+                        body: """
+                            The build was successful!
+                            Build Details: ${BUILD_URL}
+                            Build Number: ${currentBuild.number}
+                            Build Status: ${currentBuild.currentResult}
+                        """,
+                        to: 'karam.mannai@esprit.tn'
+                    )
+                }
+            }
+        }
+    }
+    post {
+       success {
+           emailext (
+           subject: "Build Successful",
+           body: "The build was successful. Job: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+           to: "karam.mannai@esprit.tn"
+                                )
+                            }
+       failure {
+           emailext (
+           subject: "Build Failed",
+            body: "The build failed. Job: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}\n\nConsole Output:\n${currentBuild.rawBuild.getLog(100)}",
+            to: to: "karam.mannai@esprit.tn",
+             attachLog: true
+            )
+       }
+    }
+}

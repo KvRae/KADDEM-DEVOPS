@@ -1,6 +1,5 @@
 pipeline {
     agent any
-
     stages {
         stage('Récupération du code de GitHub') {
             steps {

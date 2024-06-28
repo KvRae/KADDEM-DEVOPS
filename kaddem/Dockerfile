@@ -7,3 +7,4 @@ RUN curl -o kaddem.jar -L "http://192.168.33.10:8081/repository/maven-releases/t
 
 # Set the entry point to run the application
 ENTRYPOINT ["java", "-jar", "kaddem.jar"]
+

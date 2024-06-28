@@ -87,7 +87,6 @@
         </dependency>
 
     </dependencies>
-
     <distributionManagement>
         <repository>
             <id>deploymentRepo</id>
@@ -95,7 +94,6 @@
             <url>http://localhost:8081/repository/maven-releases/</url>
         </repository>
     </distributionManagement>
-
     <build>
         <plugins>
             <plugin>
@@ -103,6 +101,7 @@
                 <artifactId>sonar-maven-plugin</artifactId>
                 <version>3.9.0.2155</version>
             </plugin>
+
 
             <plugin>
                 <groupId>org.jacoco</groupId>
@@ -123,7 +122,6 @@
                 </execution>
             </executions>
             </plugin>
-
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
